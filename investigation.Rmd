@@ -42,9 +42,17 @@ View(hotel_booking_2)
 hotel_booking_2 %>%
   filter(
     arrival_date_year == 2015,
-    arrival_date_day_of_month == "July" ) %>%
+    arrival_date_day_of_month == "July",
+    hotel == "Resort Hotel",
+    ) %>%
 summarise(
       mean_adr = mean(hotel_booking_2$adr, na.rm = TRUE))
 
+```
+
+
+```{r}
+
+    
 ```
 
