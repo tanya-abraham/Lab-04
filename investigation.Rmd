@@ -37,3 +37,14 @@ hotel_booking_2<- select(hotel_booking, hotel, is_canceled, lead_time, arrival_d
 View(hotel_booking_2)
 ```
 
+
+```{r}
+hotel_booking_2 %>%
+  filter(
+    arrival_date_year == 2015,
+    arrival_date_day_of_month == "July" ) %>%
+summarise(
+      mean_adr = mean(hotel_booking_2$adr, na.rm = TRUE))
+
+```
+
