@@ -33,6 +33,7 @@ View(hotel_booking)
 ```
 
 ```{r}
-select(hotel_booking, hotel, is_canceled, lead_time, arrival_date_year, arrival_date_month, arrival_date_week_number, arrival_date_day_of_month, country, is_repeated_guest, previous_cancellations, previous_bookings_not_canceled,reserved_room_type, assigned_room_type, booking_changes, deposit_type, days_in_waiting_list, adr)
+hotel_booking_2<- select(hotel_booking, hotel, is_canceled, lead_time, arrival_date_year, arrival_date_month, arrival_date_week_number, arrival_date_day_of_month, country, is_repeated_guest, previous_cancellations, previous_bookings_not_canceled,reserved_room_type, assigned_room_type, booking_changes, deposit_type, days_in_waiting_list, adr)
+View(hotel_booking_2)
 ```
 
