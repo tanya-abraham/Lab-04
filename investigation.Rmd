@@ -33,25 +33,31 @@ hotel_booking <- read_csv("data/hotel_booking.csv")
 ```
 
 ```{r}
+#filtering data
 
+hotel_booking_city <- hotel_booking %>%                                                               filter(hotel == "City Hotel")
+
+hotel_booking_resort <- hotel_booking %>%                                                               filter(hotel == "Resort Hotel")
 
 hotel_booking_2 <- select(hotel_booking, 1:7, 15:29)
 
-hotel_booking_3 <- hotel_booking_2 %>%
-  filter(is_canceled == 0)
+
 
 ```
 
 
 ```{r}
-hotel_booking_2 %>%
-  filter(
-    arrival_date_year == 2015,
-    arrival_date_day_of_month == "July",
-    hotel == "Resort Hotel",
-    ) %>%
-summarise(
-      mean_adr = mean(hotel_booking_2$adr, na.rm = TRUE))
+#peak seasons
+
+hotel_city_adr <- hotel_booking_city %>%
+ filter(is_canceled == 0) %>%
+   group_by(arrival_date_month, arrival_date_year) %>%                                                                
+   summarise(avr_adr_city = mean(adr))
+   
+hotel_resort_adr <- hotel_booking_resort %>%
+ filter(is_canceled == 0) %>%
+   group_by(arrival_date_month, arrival_date_year) %>%                                                                
+   summarise(avr_adr_resort = mean(adr))
 
 ```
 
