@@ -381,7 +381,7 @@ hotel_booking &lt;- read_csv(&quot;data/hotel_booking.csv&quot;)</code></pre>
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code># View(hotel_booking)</code></pre>
-<pre class="r"><code>hotel_booking_2&lt;- select(hotel_booking, hotel, is_canceled, lead_time, arrival_date_year, arrival_date_month, arrival_date_week_number, arrival_date_day_of_month, country, is_repeated_guest, previous_cancellations, previous_bookings_not_canceled,reserved_room_type, assigned_room_type, booking_changes, deposit_type, days_in_waiting_list, adr)
+<pre class="r"><code>hotel_booking_2 &lt;- select(hotel_booking, 1:7, 15:29)
 
 hotel_booking_3 &lt;- hotel_booking_2 %&gt;%
   filter(is_canceled == 0)</code></pre>
