@@ -67,3 +67,36 @@ hotel_resort_adr <- hotel_booking_resort %>%
     
 ```
 
+``` {r}
+# Identifying sectors for non-refundable deposits 
+
+hb_q3 <- hotel_booking %>%
+  mutate(
+  lead_time_groups = case_when(
+    lead_time <= 14 ~ "Last Minute",
+    lead_time <= 90 ~ "Short Term",
+    lead_time <= 200 ~ "Medium Term",
+    TRUE ~ "Advance Term"
+  ),
+  risk_group = case_when(
+    market_segment == "Online TA" | market_segment == "Offline TA" ~ "External",
+    market_segment == "Direct" ~ "Direct",
+    market_segment == "Corporate" ~ "Corporate",
+    TRUE ~ "Other"
+  )
+  )
+
+risk_table <- hb_q3 %>%
+  group_by(risk_group, lead_time_groups) %>%
+  summarise(
+    total_bookings = n(),
+    total_canceled = sum(is_canceled),
+    cancellation_rate = (total_canceled / total_bookings) * 100,
+    mean_adr = mean(adr)
+    
+  ) %>%
+  ungroup() 
+
+
+
+```

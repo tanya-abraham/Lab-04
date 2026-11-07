@@ -11,7 +11,7 @@
 
 <meta name="author" content="by Team-Name: Tanya Abraham, Fiona Reji, Jessica Crocker" />
 
-<meta name="date" content="2026-11-06" />
+<meta name="date" content="2026-11-07" />
 
 <title>IDS investigation worksheet</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">IDS investigation worksheet</h1>
 <h4 class="author">by Team-Name: Tanya Abraham, Fiona Reji, Jessica
 Crocker</h4>
-<h4 class="date">2026-11-06</h4>
+<h4 class="date">2026-11-07</h4>
 
 </div>
 
@@ -381,22 +381,69 @@ hotel_booking &lt;- read_csv(&quot;data/hotel_booking.csv&quot;)</code></pre>
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code># View(hotel_booking)</code></pre>
-<pre class="r"><code>hotel_booking_2 &lt;- select(hotel_booking, 1:7, 15:29)
+<pre class="r"><code>#filtering data
 
-hotel_booking_3 &lt;- hotel_booking_2 %&gt;%
-  filter(is_canceled == 0)</code></pre>
-<pre class="r"><code>hotel_booking_2 %&gt;%
-  filter(
-    arrival_date_year == 2015,
-    arrival_date_day_of_month == &quot;July&quot;,
-    hotel == &quot;Resort Hotel&quot;,
-    ) %&gt;%
-summarise(
-      mean_adr = mean(hotel_booking_2$adr, na.rm = TRUE))</code></pre>
-<pre><code>## # A tibble: 1 × 1
-##   mean_adr
-##      &lt;dbl&gt;
-## 1     102.</code></pre>
+hotel_booking_city &lt;- hotel_booking %&gt;%                                                               filter(hotel == &quot;City Hotel&quot;)
+
+hotel_booking_resort &lt;- hotel_booking %&gt;%                                                               filter(hotel == &quot;Resort Hotel&quot;)
+
+hotel_booking_2 &lt;- select(hotel_booking, 1:7, 15:29)</code></pre>
+<pre class="r"><code>#peak seasons
+
+hotel_city_adr &lt;- hotel_booking_city %&gt;%
+ filter(is_canceled == 0) %&gt;%
+   group_by(arrival_date_month, arrival_date_year) %&gt;%                                                                
+   summarise(avr_adr_city = mean(adr))</code></pre>
+<pre><code>## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by arrival_date_month and arrival_date_year.
+## ℹ Output is grouped by arrival_date_month.
+## ℹ Use `summarise(.groups = &quot;drop_last&quot;)` to silence this message.
+## ℹ Use `summarise(.by = c(arrival_date_month, arrival_date_year))` for
+##   per-operation grouping (`?dplyr::dplyr_by`) instead.</code></pre>
+<pre class="r"><code>hotel_resort_adr &lt;- hotel_booking_resort %&gt;%
+ filter(is_canceled == 0) %&gt;%
+   group_by(arrival_date_month, arrival_date_year) %&gt;%                                                                
+   summarise(avr_adr_resort = mean(adr))</code></pre>
+<pre><code>## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by arrival_date_month and arrival_date_year.
+## ℹ Output is grouped by arrival_date_month.
+## ℹ Use `summarise(.groups = &quot;drop_last&quot;)` to silence this message.
+## ℹ Use `summarise(.by = c(arrival_date_month, arrival_date_year))` for
+##   per-operation grouping (`?dplyr::dplyr_by`) instead.</code></pre>
+<pre class="r"><code># Identifying sectors for non-refundable deposits 
+
+hb_q3 &lt;- hotel_booking %&gt;%
+  mutate(
+  lead_time_groups = case_when(
+    lead_time &lt;= 14 ~ &quot;Last Minute&quot;,
+    lead_time &lt;= 90 ~ &quot;Short Term&quot;,
+    lead_time &lt;= 200 ~ &quot;Medium Term&quot;,
+    TRUE ~ &quot;Advance Term&quot;
+  ),
+  risk_group = case_when(
+    market_segment == &quot;Online TA&quot; | market_segment == &quot;Offline TA&quot; ~ &quot;External&quot;,
+    market_segment == &quot;Direct&quot; ~ &quot;Direct&quot;,
+    market_segment == &quot;Corporate&quot; ~ &quot;Corporate&quot;,
+    TRUE ~ &quot;Other&quot;
+  )
+  )
+
+risk_table &lt;- hb_q3 %&gt;%
+  group_by(risk_group, lead_time_groups) %&gt;%
+  summarise(
+    total_bookings = n(),
+    total_canceled = sum(is_canceled),
+    cancellation_rate = (total_canceled / total_bookings) * 100,
+    mean_adr = mean(adr)
+    
+  ) %&gt;%
+  ungroup() </code></pre>
+<pre><code>## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by risk_group and lead_time_groups.
+## ℹ Output is grouped by risk_group.
+## ℹ Use `summarise(.groups = &quot;drop_last&quot;)` to silence this message.
+## ℹ Use `summarise(.by = c(risk_group, lead_time_groups))` for per-operation
+##   grouping (`?dplyr::dplyr_by`) instead.</code></pre>
 
 
 
