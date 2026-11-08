@@ -11,7 +11,7 @@
 
 <meta name="author" content="by Team-Name: Tanya Abraham, Fiona Reji, Jessica Crocker" />
 
-<meta name="date" content="2026-11-07" />
+<meta name="date" content="2026-11-08" />
 
 <title>IDS investigation worksheet</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">IDS investigation worksheet</h1>
 <h4 class="author">by Team-Name: Tanya Abraham, Fiona Reji, Jessica
 Crocker</h4>
-<h4 class="date">2026-11-07</h4>
+<h4 class="date">2026-11-08</h4>
 
 </div>
 
@@ -411,8 +411,10 @@ hotel_city_adr &lt;- hotel_booking_city %&gt;%
 ## ℹ Use `summarise(.by = c(arrival_date_month, arrival_date_year))` for
 ##   per-operation grouping (`?dplyr::dplyr_by`) instead.</code></pre>
 <pre class="r"><code># Identifying sectors for non-refundable deposits 
+# Sorting Resort Hotel bookings 
 
-hb_q3 &lt;- hotel_booking %&gt;%
+resort_hb_q3 &lt;- hotel_booking %&gt;%
+  filter(hotel == &quot;Resort Hotel&quot;) %&gt;%
   mutate(
   lead_time_groups = case_when(
     lead_time &lt;= 14 ~ &quot;Last Minute&quot;,
@@ -428,7 +430,7 @@ hb_q3 &lt;- hotel_booking %&gt;%
   )
   )
 
-risk_table &lt;- hb_q3 %&gt;%
+resort_risk_table &lt;- resort_hb_q3 %&gt;%
   group_by(risk_group, lead_time_groups) %&gt;%
   summarise(
     total_bookings = n(),
@@ -444,6 +446,46 @@ risk_table &lt;- hb_q3 %&gt;%
 ## ℹ Use `summarise(.groups = &quot;drop_last&quot;)` to silence this message.
 ## ℹ Use `summarise(.by = c(risk_group, lead_time_groups))` for per-operation
 ##   grouping (`?dplyr::dplyr_by`) instead.</code></pre>
+<pre class="r"><code>resort_risk_table_sorted &lt;- resort_risk_table %&gt;%
+  arrange(desc(cancellation_rate))
+
+# Sorting city hotel bookings 
+
+city_hb_q3 &lt;- hotel_booking %&gt;%
+  filter(hotel == &quot;City Hotel&quot;) %&gt;%
+  mutate(
+  lead_time_groups = case_when(
+    lead_time &lt;= 14 ~ &quot;Last Minute&quot;,
+    lead_time &lt;= 90 ~ &quot;Short Term&quot;,
+    lead_time &lt;= 200 ~ &quot;Medium Term&quot;,
+    TRUE ~ &quot;Advance Term&quot;
+  ),
+  risk_group = case_when(
+    market_segment == &quot;Online TA&quot; | market_segment == &quot;Offline TA&quot; ~ &quot;External&quot;,
+    market_segment == &quot;Direct&quot; ~ &quot;Direct&quot;,
+    market_segment == &quot;Corporate&quot; ~ &quot;Corporate&quot;,
+    TRUE ~ &quot;Other&quot;
+  )
+  )
+
+city_risk_table &lt;- city_hb_q3 %&gt;%
+  group_by(risk_group, lead_time_groups) %&gt;%
+  summarise(
+    total_bookings = n(),
+    total_canceled = sum(is_canceled),
+    cancellation_rate = (total_canceled / total_bookings) * 100,
+    mean_adr = mean(adr)
+    
+  ) %&gt;%
+  ungroup()</code></pre>
+<pre><code>## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by risk_group and lead_time_groups.
+## ℹ Output is grouped by risk_group.
+## ℹ Use `summarise(.groups = &quot;drop_last&quot;)` to silence this message.
+## ℹ Use `summarise(.by = c(risk_group, lead_time_groups))` for per-operation
+##   grouping (`?dplyr::dplyr_by`) instead.</code></pre>
+<pre class="r"><code>city_risk_table_sorted &lt;- city_risk_table %&gt;%
+  arrange(desc(cancellation_rate))</code></pre>
 
 
 

@@ -69,8 +69,10 @@ hotel_resort_adr <- hotel_booking_resort %>%
 
 ``` {r}
 # Identifying sectors for non-refundable deposits 
+# Sorting Resort Hotel bookings 
 
-hb_q3 <- hotel_booking %>%
+resort_hb_q3 <- hotel_booking %>%
+  filter(hotel == "Resort Hotel") %>%
   mutate(
   lead_time_groups = case_when(
     lead_time <= 14 ~ "Last Minute",
@@ -86,7 +88,7 @@ hb_q3 <- hotel_booking %>%
   )
   )
 
-risk_table <- hb_q3 %>%
+resort_risk_table <- resort_hb_q3 %>%
   group_by(risk_group, lead_time_groups) %>%
   summarise(
     total_bookings = n(),
@@ -97,6 +99,40 @@ risk_table <- hb_q3 %>%
   ) %>%
   ungroup() 
 
+resort_risk_table_sorted <- resort_risk_table %>%
+  arrange(desc(cancellation_rate))
 
+# Sorting city hotel bookings 
+
+city_hb_q3 <- hotel_booking %>%
+  filter(hotel == "City Hotel") %>%
+  mutate(
+  lead_time_groups = case_when(
+    lead_time <= 14 ~ "Last Minute",
+    lead_time <= 90 ~ "Short Term",
+    lead_time <= 200 ~ "Medium Term",
+    TRUE ~ "Advance Term"
+  ),
+  risk_group = case_when(
+    market_segment == "Online TA" | market_segment == "Offline TA" ~ "External",
+    market_segment == "Direct" ~ "Direct",
+    market_segment == "Corporate" ~ "Corporate",
+    TRUE ~ "Other"
+  )
+  )
+
+city_risk_table <- city_hb_q3 %>%
+  group_by(risk_group, lead_time_groups) %>%
+  summarise(
+    total_bookings = n(),
+    total_canceled = sum(is_canceled),
+    cancellation_rate = (total_canceled / total_bookings) * 100,
+    mean_adr = mean(adr)
+    
+  ) %>%
+  ungroup()
+
+city_risk_table_sorted <- city_risk_table %>%
+  arrange(desc(cancellation_rate))
 
 ```
