@@ -136,3 +136,56 @@ city_risk_table_sorted <- city_risk_table %>%
   arrange(desc(cancellation_rate))
 
 ```
+
+```{r}
+cancellations_by_channel_city <- hotel_booking_city %>%
+  group_by(distribution_channel) %>%
+  summarise(
+    total_number_bookings_city = n(),
+    total_cancelled_city = sum(is_canceled == 1),
+    percentage_cancelled_city = mean(is_canceled) * 100
+  )
+print(cancellations_by_channel_city)
+```
+
+```{r}
+cancellations_by_channel_resort <- hotel_booking_resort %>%
+  group_by(distribution_channel) %>%
+  summarise(
+    total_number_bookings_resort = n(),
+    total_cancelled_resort = sum(is_canceled == 1),
+    percentage_cancelled_resort = mean(is_canceled) * 100
+  )
+print(cancellations_by_channel_resort)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(cancellations_by_channel_city,
+       aes(x = reorder(distribution_channel, -percentage_cancelled_city),
+           y = percentage_cancelled_city,
+       fill = distribution_channel)) +
+  geom_col(show.legend = FALSE) +
+  labs(
+    x = "Distribution Channel",
+    y = "percentage cancelled (%)",
+    title = "Percentage of bookings cancelled across each distribution channel for City Hotel"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(cancellations_by_channel_resort,
+       aes(x = reorder(distribution_channel, -percentage_cancelled_resort),
+           y = percentage_cancelled_resort,
+       fill = distribution_channel)) +
+  geom_col(show.legend = FALSE) +
+  labs(
+    x = "Distribution Channel",
+    y = "percentage cancelled (%)",
+    title = "Percentage of bookings cancelled across each distribution channel for Resort Hotel"
+  ) +
+  theme_minimal ()
+```
+
