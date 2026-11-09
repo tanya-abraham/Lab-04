@@ -138,6 +138,8 @@ city_risk_table_sorted <- city_risk_table %>%
 ```
 
 ```{r}
+#Percentage of cancellations by distribution channel for city hotel 
+
 cancellations_by_channel_city <- hotel_booking_city %>%
   group_by(distribution_channel) %>%
   summarise(
@@ -149,6 +151,8 @@ print(cancellations_by_channel_city)
 ```
 
 ```{r}
+#Percentage of cancellations by distribution channel for resort hotel
+
 cancellations_by_channel_resort <- hotel_booking_resort %>%
   group_by(distribution_channel) %>%
   summarise(
@@ -160,6 +164,8 @@ print(cancellations_by_channel_resort)
 ```
 
 ```{r}
+#Graph for cancelled bookings for each distribution channel for city hotel
+
 library(ggplot2)
 
 ggplot(cancellations_by_channel_city,
@@ -176,6 +182,8 @@ ggplot(cancellations_by_channel_city,
 ```
 
 ```{r}
+#Graph for cancelled bookings for each distribution channel for resort hotel
+
 ggplot(cancellations_by_channel_resort,
        aes(x = reorder(distribution_channel, -percentage_cancelled_resort),
            y = percentage_cancelled_resort,
