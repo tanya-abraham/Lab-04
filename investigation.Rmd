@@ -102,6 +102,10 @@ resort_risk_table <- resort_hb_q3 %>%
 resort_risk_table_sorted <- resort_risk_table %>%
   arrange(desc(cancellation_rate))
 
+```
+
+```{r}
+
 # Sorting city hotel bookings 
 
 city_hb_q3 <- hotel_booking %>%
@@ -136,6 +140,41 @@ city_risk_table_sorted <- city_risk_table %>%
   arrange(desc(cancellation_rate))
 
 ```
+
+``` {r}
+# Visualizing for resort hotel 
+
+library(ggplot2)
+
+ggplot(resort_risk_table, aes(x = lead_time_groups, y = cancellation_rate, fill = risk_group)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Cancellation Rate by Lead Time and Risk Group for Resort Hotel",
+    x = "Lead Time",
+    y = "Cancellation Rate",
+    fill = "Booking Group"
+  )
+
+
+```
+
+
+``` {r}
+
+# Visualizing for City Hotel
+library(ggplot2)
+
+ggplot(city_risk_table, aes(x = lead_time_groups, y = cancellation_rate, fill = risk_group)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Cancellation Rate by Lead Time and Risk Group for City Hotel",
+    x = "Lead Time",
+    y = "Cancellation Rate",
+    fill = "Booking Group"
+  )
+
+```
+
 
 ```{r}
 cancellations_by_channel_city <- hotel_booking_city %>%
