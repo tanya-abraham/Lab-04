@@ -212,6 +212,7 @@ ggplot(cancellations_by_channel_city,
            y = percentage_cancelled_city,
        fill = distribution_channel)) +
   geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(round(percentage_cancelled_city, 1), "%")), vjust = -0.5) +
   labs(
     x = "Distribution Channel",
     y = "percentage cancelled (%)",
@@ -228,6 +229,7 @@ ggplot(cancellations_by_channel_resort,
            y = percentage_cancelled_resort,
        fill = distribution_channel)) +
   geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(round(percentage_cancelled_resort, 1), "%")), vjust = -0.5) +
   labs(
     x = "Distribution Channel",
     y = "percentage cancelled (%)",
