@@ -62,13 +62,9 @@ hotel_resort_adr <- hotel_booking_resort %>%
 ```
 
 
-```{r}
-
-    
-```
-
 ``` {r}
 # Identifying sectors for non-refundable deposits 
+
 # Sorting Resort Hotel bookings 
 
 resort_hb_q3 <- hotel_booking %>%
@@ -144,6 +140,10 @@ city_risk_table_sorted <- city_risk_table %>%
 ``` {r}
 # Visualizing for resort hotel 
 
+resort_risk_table$lead_time_groups <- factor(
+  resort_risk_table$lead_time_groups,
+                            levels = c("Last Minute", "Short Term", "Medium Term", "Advance Term"))
+
 
 library(ggplot2)
 ggplot(resort_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancellation_rate)) +
@@ -164,11 +164,15 @@ ggplot(resort_risk_table, aes( x = lead_time_groups, y = risk_group, fill = canc
 
 # Visualizing for city hotel 
 
+city_risk_table$lead_time_groups <- factor(
+  city_risk_table$lead_time_groups,
+                            levels = c("Last Minute", "Short Term", "Medium Term", "Advance Term"))
+
 library(ggplot2)
 ggplot(city_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancellation_rate)) +
   geom_tile() +
   labs(
-    title = "Risk Analysis for Resort Hotel",
+    title = "Risk Analysis for City Hotel",
     y = "Distribution Channels",
     x = "Booking Time"
   ) +
