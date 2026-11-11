@@ -144,37 +144,37 @@ city_risk_table_sorted <- city_risk_table %>%
 ``` {r}
 # Visualizing for resort hotel 
 
-library(ggplot2)
 
-ggplot(resort_risk_table, aes(x = lead_time_groups, y = cancellation_rate, fill = risk_group)) +
-  geom_col(position = "dodge") +
+library(ggplot2)
+ggplot(resort_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancellation_rate)) +
+  geom_tile() +
   labs(
-    title = "Cancellation Rate by Lead Time and Risk Group for Resort Hotel",
-    x = "Lead Time",
-    y = "Cancellation Rate",
-    fill = "Booking Group"
-  )
+    title = "Risk Analysis for Resort Hotel",
+    y = "Distribution Channels",
+    x = "Booking Time"
+  ) +
+  theme_gray() 
 
 
 ```
 
 
-``` {r}
 
-# Visualizing for City Hotel
+```{r}
+
+# Visualizing for city hotel 
+
 library(ggplot2)
-
-ggplot(city_risk_table, aes(x = lead_time_groups, y = cancellation_rate, fill = risk_group)) +
-  geom_col(position = "dodge") +
+ggplot(city_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancellation_rate)) +
+  geom_tile() +
   labs(
-    title = "Cancellation Rate by Lead Time and Risk Group for City Hotel",
-    x = "Lead Time",
-    y = "Cancellation Rate",
-    fill = "Booking Group"
-  )
+    title = "Risk Analysis for Resort Hotel",
+    y = "Distribution Channels",
+    x = "Booking Time"
+  ) +
+  theme_gray() 
 
 ```
-
 
 ```{r}
 #Percentage of cancellations by distribution channel for city hotel 
