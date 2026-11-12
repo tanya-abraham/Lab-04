@@ -167,14 +167,16 @@ mutate(
 ggplot(monthly_demand_resort,
        aes(x = arrival_date_month,
            y = monthly_bookings,
-           fill = factor(arrival_date_year))) +
-  geom_col(position = "dodge") +
+            col = factor(arrival_date_year),
+        group = factor(arrival_date_year))) +
+  geom_line() +
+  geom_point()  +
   labs(
     title = "Seasonal Booking Demand",
     subtitle = "Monthly bookings compared across years",
     x = "Month",
     y = "Number of Bookings",
-    fill = "Year"
+    col = "Year"
   ) +
   theme_minimal() +
   theme(
@@ -218,14 +220,16 @@ mutate(
 ggplot(monthly_demand_city,
        aes(x = arrival_date_month,
            y = monthly_bookings,
-           fill = factor(arrival_date_year))) +
-  geom_col(position = "dodge") +
+            col = factor(arrival_date_year),
+        group = factor(arrival_date_year))) +
+  geom_line() +
+  geom_point()  +
   labs(
     title = "Seasonal Booking Demand",
     subtitle = "Monthly bookings compared across years",
     x = "Month",
     y = "Number of Bookings",
-    fill = "Year"
+    col = "Year"
   ) +
   theme_minimal() +
   theme(
@@ -249,7 +253,26 @@ left_join(hotel_resort_adr)
 
 ```
 ```{r}
+ggplot(monthly_resort,
+       aes(x = monthly_bookings,
+           y = avr_adr_resort)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relationship Between Booking Demand and ADR",
+    x = "Monthly Booking Volume",
+    y = "Average ADR"
+  ) +
+  theme_minimal()
 
+```
+```{r}
+ # adr_model <- lm(
+ # avr_adr_resort ~ monthly_bookings,
+  #data = monthly__resort
+#)
+
+#summary(adr_model)
 ```
 
 
