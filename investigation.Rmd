@@ -56,9 +56,80 @@ hotel_city_adr <- hotel_booking_city %>%
    
 hotel_resort_adr <- hotel_booking_resort %>%
  filter(is_canceled == 0) %>%
-   group_by(arrival_date_month, arrival_date_year) %>%                                                                
-   summarise(avr_adr_resort = mean(adr))
+   group_by(arrival_date_month, arrival_date_year) %>%
+  
+  summarise(avr_adr_resort = mean(adr))
+```
 
+
+```{r}
+#Visualization for resort adr
+
+hotel_resort_adr <- hotel_resort_adr %>%
+ mutate( arrival_date_month = fct_relevel(
+      arrival_date_month,
+      "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+    ))
+
+
+hotel_resort_adr %>%
+ggplot( 
+    aes(x= arrival_date_month, y= avr_adr_resort,
+        col = factor(arrival_date_year),
+        group = factor(arrival_date_year))
+    )+
+  geom_line() +
+  geom_point()  +
+  labs(
+    title = "Average ADR at a Resort Hotel by month",
+    subtitle = "Grouped by year",
+    x = "Months",
+    y = "Average ADR",
+    col = "Year"
+  )+
+
+  theme_minimal() +
+  theme( axis.text.x = 
+           element_text(angle = 45, 
+                        hjust = 1)
+)
+```
+
+
+```{r}
+#Visualization for city adr
+
+hotel_city_adr <- hotel_city_adr %>%
+ mutate( arrival_date_month = fct_relevel(
+      arrival_date_month,
+      "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+    ))
+
+
+hotel_city_adr %>%
+ggplot( 
+    aes(x= arrival_date_month, y= avr_adr_city,
+        col = factor(arrival_date_year),
+        group = factor(arrival_date_year))
+    )+
+  geom_line() +
+  geom_point()  +
+  labs(
+    title = "Average ADR at a City Hotel by month",
+    subtitle = "Grouped by year",
+    x = "Months",
+    y = "Average ADR",
+    col = "Year"
+  )+
+
+  theme_minimal() +
+  theme( axis.text.x = 
+           element_text(angle = 45, 
+                        hjust = 1)
+)
+```
+```{r}
+# Booking volume 
 ```
 
 
