@@ -66,11 +66,17 @@ hotel_resort_adr <- hotel_booking_resort %>%
 #Visualization for resort adr
 
 hotel_resort_adr <- hotel_resort_adr %>%
- mutate( arrival_date_month = fct_relevel(
+mutate(
+    arrival_date_month = factor(
       arrival_date_month,
-      "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-    ))
-
+      levels = c(
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ),
+      ordered = TRUE
+    )
+  )
 
 hotel_resort_adr %>%
 ggplot( 
@@ -100,10 +106,17 @@ ggplot(
 #Visualization for city adr
 
 hotel_city_adr <- hotel_city_adr %>%
- mutate( arrival_date_month = fct_relevel(
+ mutate(
+    arrival_date_month = factor(
       arrival_date_month,
-      "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-    ))
+      levels = c(
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ),
+      ordered = TRUE
+    )
+  )
 
 
 hotel_city_adr %>%
@@ -129,7 +142,114 @@ ggplot(
 )
 ```
 ```{r}
-# Booking volume 
+# Booking volume Resort
+monthly_demand_resort <- hotel_booking_resort %>%
+  group_by( arrival_date_year, arrival_date_month) %>%
+  summarise(
+    monthly_bookings = n()
+  )
+
+
+monthly_demand_resort <- monthly_demand_resort %>%
+mutate(
+    arrival_date_month = factor(
+      arrival_date_month,
+      levels = c(
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ),
+      ordered = TRUE
+    )
+  )
+
+
+ggplot(monthly_demand_resort,
+       aes(x = arrival_date_month,
+           y = monthly_bookings,
+           fill = factor(arrival_date_year))) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Seasonal Booking Demand",
+    subtitle = "Monthly bookings compared across years",
+    x = "Month",
+    y = "Number of Bookings",
+    fill = "Year"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+
+
+
+
+
+
+```
+```{r}
+# Booking volume City
+
+
+monthly_demand_city <- hotel_booking_city %>%
+  group_by( arrival_date_year, arrival_date_month) %>%
+  summarise(
+    monthly_bookings = n()
+    
+  )
+
+
+
+monthly_demand_city <- monthly_demand_city %>%
+mutate(
+    arrival_date_month = factor(
+      arrival_date_month,
+      levels = c(
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ),
+      ordered = TRUE
+    )
+  )
+
+
+ggplot(monthly_demand_city,
+       aes(x = arrival_date_month,
+           y = monthly_bookings,
+           fill = factor(arrival_date_year))) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Seasonal Booking Demand",
+    subtitle = "Monthly bookings compared across years",
+    x = "Month",
+    y = "Number of Bookings",
+    fill = "Year"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+
+
+
+```
+
+```{r}
+#Joining demand and adr
+monthly_city <- monthly_demand_city %>%
+
+left_join(hotel_city_adr)
+
+monthly_resort <- monthly_demand_resort %>%
+
+left_join(hotel_resort_adr)
+
+```
+```{r}
+
 ```
 
 
