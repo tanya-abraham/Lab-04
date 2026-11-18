@@ -172,7 +172,7 @@ ggplot(monthly_demand_resort,
   geom_line() +
   geom_point()  +
   labs(
-    title = "Seasonal Booking Demand",
+    title = "Resort Hotel Seasonal Booking Demand",
     subtitle = "Monthly bookings compared across years",
     x = "Month",
     y = "Number of Bookings",
@@ -225,7 +225,7 @@ ggplot(monthly_demand_city,
   geom_line() +
   geom_point()  +
   labs(
-    title = "Seasonal Booking Demand",
+    title = "City Hotel Seasonal Booking Demand",
     subtitle = "Monthly bookings compared across years",
     x = "Month",
     y = "Number of Bookings",
