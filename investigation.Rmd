@@ -267,13 +267,94 @@ ggplot(monthly_resort,
 
 ```
 ```{r}
- # adr_model <- lm(
- # avr_adr_resort ~ monthly_bookings,
-  #data = monthly__resort
-#)
-
-#summary(adr_model)
+ggplot(monthly_city,
+       aes(x = monthly_bookings,
+           y = avr_adr_city)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relationship Between Booking Demand and ADR",
+    x = "Monthly Booking Volume",
+    y = "Average ADR"
+  ) +
+  theme_minimal()
 ```
+
+```{r}
+hotel__adr_city_daily <- hotel_booking_city %>%
+ filter(is_canceled == 0, arrival_date_year == 2016) %>%
+   group_by(arrival_date_month, arrival_date_day_of_month) %>%                                                                
+   summarise(avr_daily_adr_city = mean(adr))
+   
+hotel__adr_resort_daily <- hotel_booking_resort %>%
+ filter(is_canceled == 0, arrival_date_year == 2016) %>%
+   group_by(arrival_date_month, arrival_date_day_of_month) %>%
+  
+  summarise(avr_daily_adr_resort = mean(adr))
+```
+```{r}
+
+daily_demand_resort <- hotel_booking_resort %>%
+  filter(arrival_date_year == 2016) %>%
+  group_by(arrival_date_month, arrival_date_day_of_month) %>%
+  summarise(
+    daily_bookings = n()
+  )
+
+
+daily_demand_city <- hotel_booking_city %>%
+  filter(arrival_date_year == 2016) %>%
+  group_by(arrival_date_month, arrival_date_day_of_month) %>%
+  summarise(
+    daily_bookings = n()
+  )
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+#Joining daily demand and adr
+daily_city <- daily_demand_city %>%
+
+left_join(hotel__adr_city_daily)
+
+daily_resort <- daily_demand_resort %>%
+
+left_join(hotel__adr_resort_daily)
+```
+
+```{r}
+ggplot(daily_city,
+       aes(x = daily_bookings,
+           y = avr_daily_adr_city)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relationship Between Booking Demand and ADR",
+    x = "Daily Booking Volume",
+    y = "Average ADR"
+  ) +
+  theme_minimal()
+```
+```{r}
+ggplot(daily_resort,
+       aes(x = daily_bookings,
+           y = avr_daily_adr_resort)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relationship Between Booking Demand and ADR",
+    x = "Daily Booking Volume",
+    y = "Average ADR"
+  ) +
+  theme_minimal()
+```
+
+
 
 
 ``` {r}
