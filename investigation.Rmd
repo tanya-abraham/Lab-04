@@ -476,6 +476,107 @@ ggplot(city_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancel
 ```
 
 ```{r}
+# Modelling for Resort Hotel 
+
+library(tidyverse)
+
+library(tidymodels)
+
+resort_model <- resort_hb_q3 %>%
+  mutate(
+    is_canceled = factor(is_canceled, levels = c("1", "0")),
+    risk_group = as.factor(risk_group)
+  ) %>%
+  select(is_canceled, lead_time_groups, risk_group) %>%
+  drop_na()
+
+set.seed(123)
+resort_split <- initial_split(resort_model, prop = 0.80)
+resort_train <- training(resort_split)
+resort_test <- testing(resort_split)
+
+resort_recipe <- recipe(is_canceled ~ lead_time_groups + risk_group, data = resort_train) %>%
+  step_dummy(all_nominal_predictors())
+
+resort_mod <- logistic_reg() %>%
+  set_engine("glm")
+
+resort_wflow <- workflow() %>%
+  add_recipe(resort_recipe) %>%
+  add_model(resort_mod)
+
+resort_fit <- resort_wflow %>%
+  fit(data = resort_train)
+
+tidy(resort_fit)
+
+resort_preds <- predict(resort_fit, resort_test, type = "prob") %>%
+  bind_cols(resort_test)
+
+
+resort_preds %>%
+  select(is_canceled, lead_time_groups, risk_group, .pred_1) %>%
+  head(10)
+
+resort_preds %>%
+  roc_auc(truth = is_canceled, .pred_1)
+
+resort_preds %>%
+  roc_curve(truth = is_canceled, .pred_1) %>%
+  autoplot()
+
+```
+```{r}
+
+library(tidyverse)
+
+library(tidymodels)
+
+city_model <- city_hb_q3 %>%
+  mutate(
+    is_canceled = factor(is_canceled, levels = c("1", "0")),
+    risk_group = as.factor(risk_group)
+  ) %>%
+  select(is_canceled, lead_time_groups, risk_group) %>%
+  drop_na()
+
+set.seed(123)
+city_split <- initial_split(city_model, prop = 0.80)
+city_train <- training(city_split)
+city_test <- testing(city_split)
+
+city_recipe <- recipe(is_canceled ~ lead_time_groups + risk_group, data = resort_train) %>%
+  step_dummy(all_nominal_predictors())
+
+city_mod <- logistic_reg() %>%
+  set_engine("glm")
+
+city_wflow <- workflow() %>%
+  add_recipe(city_recipe) %>%
+  add_model(city_mod)
+
+city_fit <- city_wflow %>%
+  fit(data = city_train)
+
+tidy(city_fit)
+
+city_preds <- predict(city_fit, city_test, type = "prob") %>%
+  bind_cols(city_test)
+
+city_preds %>%
+  select(is_canceled, lead_time_groups, risk_group, .pred_1) %>%
+  head(10)
+
+city_preds %>%
+  roc_auc(truth = is_canceled, .pred_1)
+
+city_preds %>%
+  roc_curve(truth = is_canceled, .pred_1) %>%
+  autoplot()
+```
+
+
+```{r}
 #Percentage of cancellations by distribution channel for city hotel 
 
 cancellations_by_channel_city <- hotel_booking_city %>%
