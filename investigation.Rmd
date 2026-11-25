@@ -19,6 +19,8 @@ library(tidyverse)
 # Add any other libraries here
 library(readr)
 
+library(tidymodels)
+
 
 ```
 
@@ -35,7 +37,6 @@ hotel_booking <- read_csv("data/hotel_booking.csv")
 ```{r}
 #filtering data
 
-hotel_booking_city <- hotel_booking %>%                                                               filter(hotel == "City Hotel")
 
 hotel_booking_resort <- hotel_booking %>%                                                               filter(hotel == "Resort Hotel")
 
@@ -47,22 +48,198 @@ hotel_booking_2 <- select(hotel_booking, 1:7, 15:29)
 
 
 ```{r}
-#peak seasons
+#Monthly ADR
+
+   
+hotel_resort_adr <- hotel_booking_resort %>%
+ filter(is_canceled == 0) %>%
+   group_by(arrival_date_month, arrival_date_year) %>%
+  
+  summarise(avr_adr_resort = mean(adr))
+
 
 ```
 
 
 ```{r}
+#Visualization for resort ADR
+
+hotel_resort_adr <- hotel_resort_adr %>%
+mutate(
+    arrival_date_month = factor(
+      arrival_date_month,
+      levels = c(
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ),
+      ordered = TRUE
+    )
+  )
+
+hotel_resort_adr %>%
+ggplot( 
+    aes(x= arrival_date_month, y= avr_adr_resort,
+        col = factor(arrival_date_year),
+        group = factor(arrival_date_year))
+    )+
+  geom_line() +
+  geom_point()  +
+  labs(
+    title = "Average ADR at a Resort Hotel by month",
+    subtitle = "Grouped by year",
+    x = "Months",
+    y = "Average ADR",
+    col = "Year"
+  )+
+
+  theme_minimal() +
+  theme( axis.text.x = 
+           element_text(angle = 45, 
+                        hjust = 1)
+)
+```
+
+
+```{r}
+# Booking volume Resort
+monthly_demand_resort <- hotel_booking_resort %>%
+  group_by( arrival_date_year, arrival_date_month) %>%
+  summarise(
+    monthly_bookings = n()
+  )
+
+
+monthly_demand_resort <- monthly_demand_resort %>%
+mutate(
+    arrival_date_month = factor(
+      arrival_date_month,
+      levels = c(
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ),
+      ordered = TRUE
+    )
+  )
+
+
+```
+
+```{r}
+ggplot(monthly_demand_resort,
+       aes(x = arrival_date_month,
+           y = monthly_bookings,
+            col = factor(arrival_date_year),
+        group = factor(arrival_date_year))) +
+  geom_line() +
+  geom_point()  +
+  labs(
+    title = "Resort Hotel Seasonal Booking Demand",
+    subtitle = "Monthly bookings compared across years",
+    x = "Month",
+    y = "Number of Bookings",
+    col = "Year"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+
+```
+
+
+
+
+
+```{r}
+#Joining demand and adr
+
+
+monthly_resort <- monthly_demand_resort %>%
+
+left_join(hotel_resort_adr)
+```
+
+
+
+```{r}
+ggplot(monthly_resort,
+       aes(x = monthly_bookings,
+           y = avr_adr_resort)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relationship Between Booking Demand and ADR",
+    x = "Monthly Booking Volume",
+    y = "Average ADR"
+  ) +
+  theme_minimal()
+```
+
+
+
+```{r}
+resort_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(avr_adr_resort ~ monthly_bookings, data = monthly_resort)
+tidy(resort_fit)
+```
+
+
+```{r}
+hotel__adr_resort_daily <- hotel_booking_resort %>%
+ filter(is_canceled == 0, arrival_date_year == 2016) %>%
+   group_by(arrival_date_month, arrival_date_day_of_month) %>%
+  
+  summarise(avr_daily_adr_resort = mean(adr))
+```
+
+
+```{r}
+daily_demand_resort <- hotel_booking_resort %>%
+  filter(arrival_date_year == 2016) %>%
+  group_by(arrival_date_month, arrival_date_day_of_month) %>%
+  summarise(
+    daily_bookings = n()
+  )
+
 
 ```
 
 
 ```{r}
+#Joining daily demand and adr
+daily_resort <- daily_demand_resort %>%
+
+left_join(hotel__adr_resort_daily)
+
 
 ```
+
+
 ```{r}
+ggplot(daily_resort,
+       aes(x = daily_bookings,
+           y = avr_daily_adr_resort)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Relationship Between Booking Demand and ADR",
+    x = "Daily Booking Volume",
+    y = "Average ADR"
+  ) +
+  theme_minimal()
+
 ```
 
+```{r}
+resort_2_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(avr_daily_adr_resort ~ daily_bookings, data = daily_resort)
+tidy(resort_2_fit)
+```
 
 
 
