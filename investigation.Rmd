@@ -607,8 +607,9 @@ print(cancellations_by_channel_resort)
 
 library(ggplot2)
 
-ggplot(cancellations_by_channel_city,
-       aes(x = reorder(distribution_channel, -percentage_cancelled_city),
+cancellations_by_channel_city %>%
+  filter(distribution_channel != "Undefined" & distribution_channel != "GDS") %>%
+  ggplot(aes(x = reorder(distribution_channel, -percentage_cancelled_city),
            y = percentage_cancelled_city,
        fill = distribution_channel)) +
   geom_col(show.legend = FALSE) +
@@ -624,8 +625,10 @@ ggplot(cancellations_by_channel_city,
 ```{r}
 #Graph for cancelled bookings for each distribution channel for resort hotel
 
-ggplot(cancellations_by_channel_resort,
-       aes(x = reorder(distribution_channel, -percentage_cancelled_resort),
+
+cancellations_by_channel_resort %>%
+  filter(distribution_channel != "Undefined") %>%
+ggplot(aes(x = reorder(distribution_channel, -percentage_cancelled_resort),
            y = percentage_cancelled_resort,
        fill = distribution_channel)) +
   geom_col(show.legend = FALSE) +
