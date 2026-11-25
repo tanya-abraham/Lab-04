@@ -49,309 +49,18 @@ hotel_booking_2 <- select(hotel_booking, 1:7, 15:29)
 ```{r}
 #peak seasons
 
-hotel_city_adr <- hotel_booking_city %>%
- filter(is_canceled == 0) %>%
-   group_by(arrival_date_month, arrival_date_year) %>%                                                                
-   summarise(avr_adr_city = mean(adr))
-   
-hotel_resort_adr <- hotel_booking_resort %>%
- filter(is_canceled == 0) %>%
-   group_by(arrival_date_month, arrival_date_year) %>%
-  
-  summarise(avr_adr_resort = mean(adr))
 ```
 
-
-```{r}
-#Visualization for resort adr
-
-hotel_resort_adr <- hotel_resort_adr %>%
-mutate(
-    arrival_date_month = factor(
-      arrival_date_month,
-      levels = c(
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
-      ),
-      ordered = TRUE
-    )
-  )
-
-hotel_resort_adr %>%
-ggplot( 
-    aes(x= arrival_date_month, y= avr_adr_resort,
-        col = factor(arrival_date_year),
-        group = factor(arrival_date_year))
-    )+
-  geom_line() +
-  geom_point()  +
-  labs(
-    title = "Average ADR at a Resort Hotel by month",
-    subtitle = "Grouped by year",
-    x = "Months",
-    y = "Average ADR",
-    col = "Year"
-  )+
-
-  theme_minimal() +
-  theme( axis.text.x = 
-           element_text(angle = 45, 
-                        hjust = 1)
-)
-```
-
-
-```{r}
-#Visualization for city adr
-
-hotel_city_adr <- hotel_city_adr %>%
- mutate(
-    arrival_date_month = factor(
-      arrival_date_month,
-      levels = c(
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
-      ),
-      ordered = TRUE
-    )
-  )
-
-
-hotel_city_adr %>%
-ggplot( 
-    aes(x= arrival_date_month, y= avr_adr_city,
-        col = factor(arrival_date_year),
-        group = factor(arrival_date_year))
-    )+
-  geom_line() +
-  geom_point()  +
-  labs(
-    title = "Average ADR at a City Hotel by month",
-    subtitle = "Grouped by year",
-    x = "Months",
-    y = "Average ADR",
-    col = "Year"
-  )+
-
-  theme_minimal() +
-  theme( axis.text.x = 
-           element_text(angle = 45, 
-                        hjust = 1)
-)
-```
-```{r}
-# Booking volume Resort
-monthly_demand_resort <- hotel_booking_resort %>%
-  group_by( arrival_date_year, arrival_date_month) %>%
-  summarise(
-    monthly_bookings = n()
-  )
-
-
-monthly_demand_resort <- monthly_demand_resort %>%
-mutate(
-    arrival_date_month = factor(
-      arrival_date_month,
-      levels = c(
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
-      ),
-      ordered = TRUE
-    )
-  )
-
-
-ggplot(monthly_demand_resort,
-       aes(x = arrival_date_month,
-           y = monthly_bookings,
-            col = factor(arrival_date_year),
-        group = factor(arrival_date_year))) +
-  geom_line() +
-  geom_point()  +
-  labs(
-    title = "Resort Hotel Seasonal Booking Demand",
-    subtitle = "Monthly bookings compared across years",
-    x = "Month",
-    y = "Number of Bookings",
-    col = "Year"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-
-
-
-
-
-
-
-```
-```{r}
-# Booking volume City
-
-
-monthly_demand_city <- hotel_booking_city %>%
-  group_by( arrival_date_year, arrival_date_month) %>%
-  summarise(
-    monthly_bookings = n()
-    
-  )
-
-
-
-monthly_demand_city <- monthly_demand_city %>%
-mutate(
-    arrival_date_month = factor(
-      arrival_date_month,
-      levels = c(
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
-      ),
-      ordered = TRUE
-    )
-  )
-
-
-ggplot(monthly_demand_city,
-       aes(x = arrival_date_month,
-           y = monthly_bookings,
-            col = factor(arrival_date_year),
-        group = factor(arrival_date_year))) +
-  geom_line() +
-  geom_point()  +
-  labs(
-    title = "City Hotel Seasonal Booking Demand",
-    subtitle = "Monthly bookings compared across years",
-    x = "Month",
-    y = "Number of Bookings",
-    col = "Year"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-
-
-
-
-```
-
-```{r}
-#Joining demand and adr
-monthly_city <- monthly_demand_city %>%
-
-left_join(hotel_city_adr)
-
-monthly_resort <- monthly_demand_resort %>%
-
-left_join(hotel_resort_adr)
-
-```
-```{r}
-ggplot(monthly_resort,
-       aes(x = monthly_bookings,
-           y = avr_adr_resort)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(
-    title = "Relationship Between Booking Demand and ADR",
-    x = "Monthly Booking Volume",
-    y = "Average ADR"
-  ) +
-  theme_minimal()
-
-```
-```{r}
-ggplot(monthly_city,
-       aes(x = monthly_bookings,
-           y = avr_adr_city)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(
-    title = "Relationship Between Booking Demand and ADR",
-    x = "Monthly Booking Volume",
-    y = "Average ADR"
-  ) +
-  theme_minimal()
-```
-
-```{r}
-hotel__adr_city_daily <- hotel_booking_city %>%
- filter(is_canceled == 0, arrival_date_year == 2016) %>%
-   group_by(arrival_date_month, arrival_date_day_of_month) %>%                                                                
-   summarise(avr_daily_adr_city = mean(adr))
-   
-hotel__adr_resort_daily <- hotel_booking_resort %>%
- filter(is_canceled == 0, arrival_date_year == 2016) %>%
-   group_by(arrival_date_month, arrival_date_day_of_month) %>%
-  
-  summarise(avr_daily_adr_resort = mean(adr))
-```
-```{r}
-
-daily_demand_resort <- hotel_booking_resort %>%
-  filter(arrival_date_year == 2016) %>%
-  group_by(arrival_date_month, arrival_date_day_of_month) %>%
-  summarise(
-    daily_bookings = n()
-  )
-
-
-daily_demand_city <- hotel_booking_city %>%
-  filter(arrival_date_year == 2016) %>%
-  group_by(arrival_date_month, arrival_date_day_of_month) %>%
-  summarise(
-    daily_bookings = n()
-  )
-
-
-```
 
 ```{r}
 
 ```
 
-```{r}
-#Joining daily demand and adr
-daily_city <- daily_demand_city %>%
-
-left_join(hotel__adr_city_daily)
-
-daily_resort <- daily_demand_resort %>%
-
-left_join(hotel__adr_resort_daily)
-```
 
 ```{r}
-ggplot(daily_city,
-       aes(x = daily_bookings,
-           y = avr_daily_adr_city)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(
-    title = "Relationship Between Booking Demand and ADR",
-    x = "Daily Booking Volume",
-    y = "Average ADR"
-  ) +
-  theme_minimal()
+
 ```
 ```{r}
-ggplot(daily_resort,
-       aes(x = daily_bookings,
-           y = avr_daily_adr_resort)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(
-    title = "Relationship Between Booking Demand and ADR",
-    x = "Daily Booking Volume",
-    y = "Average ADR"
-  ) +
-  theme_minimal()
 ```
 
 
@@ -371,7 +80,7 @@ resort_hb_q3 <- hotel_booking %>%
     lead_time <= 200 ~ "Medium Term",
     TRUE ~ "Advance Term"
   ),
-  risk_group = case_when(
+  booking_channel = case_when(
     market_segment == "Online TA" | market_segment == "Offline TA" ~ "External",
     market_segment == "Direct" ~ "Direct",
     market_segment == "Corporate" ~ "Corporate",
@@ -380,7 +89,7 @@ resort_hb_q3 <- hotel_booking %>%
   )
 
 resort_risk_table <- resort_hb_q3 %>%
-  group_by(risk_group, lead_time_groups) %>%
+  group_by(booking_channel, lead_time_groups) %>%
   summarise(
     total_bookings = n(),
     total_canceled = sum(is_canceled),
@@ -397,38 +106,7 @@ resort_risk_table_sorted <- resort_risk_table %>%
 
 ```{r}
 
-# Sorting city hotel bookings 
 
-city_hb_q3 <- hotel_booking %>%
-  filter(hotel == "City Hotel") %>%
-  mutate(
-  lead_time_groups = case_when(
-    lead_time <= 14 ~ "Last Minute",
-    lead_time <= 90 ~ "Short Term",
-    lead_time <= 200 ~ "Medium Term",
-    TRUE ~ "Advance Term"
-  ),
-  risk_group = case_when(
-    market_segment == "Online TA" | market_segment == "Offline TA" ~ "External",
-    market_segment == "Direct" ~ "Direct",
-    market_segment == "Corporate" ~ "Corporate",
-    TRUE ~ "Other"
-  )
-  )
-
-city_risk_table <- city_hb_q3 %>%
-  group_by(risk_group, lead_time_groups) %>%
-  summarise(
-    total_bookings = n(),
-    total_canceled = sum(is_canceled),
-    cancellation_rate = (total_canceled / total_bookings) * 100,
-    mean_adr = mean(adr)
-    
-  ) %>%
-  ungroup()
-
-city_risk_table_sorted <- city_risk_table %>%
-  arrange(desc(cancellation_rate))
 
 ```
 
@@ -441,7 +119,7 @@ resort_risk_table$lead_time_groups <- factor(
 
 
 library(ggplot2)
-ggplot(resort_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancellation_rate)) +
+ggplot(resort_risk_table, aes( x = lead_time_groups, y = booking_channel, fill = cancellation_rate)) +
   geom_tile() +
   labs(
     title = "Risk Analysis for Resort Hotel",
@@ -457,21 +135,6 @@ ggplot(resort_risk_table, aes( x = lead_time_groups, y = risk_group, fill = canc
 
 ```{r}
 
-# Visualizing for city hotel 
-
-city_risk_table$lead_time_groups <- factor(
-  city_risk_table$lead_time_groups,
-                            levels = c("Last Minute", "Short Term", "Medium Term", "Advance Term"))
-
-library(ggplot2)
-ggplot(city_risk_table, aes( x = lead_time_groups, y = risk_group, fill = cancellation_rate)) +
-  geom_tile() +
-  labs(
-    title = "Risk Analysis for City Hotel",
-    y = "Distribution Channels",
-    x = "Booking Time"
-  ) +
-  theme_gray() 
 
 ```
 
@@ -485,9 +148,9 @@ library(tidymodels)
 resort_model <- resort_hb_q3 %>%
   mutate(
     is_canceled = factor(is_canceled, levels = c("1", "0")),
-    risk_group = as.factor(risk_group)
+    booking_channel = as.factor(booking_channel)
   ) %>%
-  select(is_canceled, lead_time_groups, risk_group) %>%
+  select(is_canceled, lead_time_groups, booking_channel) %>%
   drop_na()
 
 set.seed(123)
@@ -495,7 +158,7 @@ resort_split <- initial_split(resort_model, prop = 0.80)
 resort_train <- training(resort_split)
 resort_test <- testing(resort_split)
 
-resort_recipe <- recipe(is_canceled ~ lead_time_groups + risk_group, data = resort_train) %>%
+resort_recipe <- recipe(is_canceled ~ lead_time_groups + booking_channel, data = resort_train) %>%
   step_dummy(all_nominal_predictors())
 
 resort_mod <- logistic_reg() %>%
@@ -515,7 +178,7 @@ resort_preds <- predict(resort_fit, resort_test, type = "prob") %>%
 
 
 resort_preds %>%
-  select(is_canceled, lead_time_groups, risk_group, .pred_1) %>%
+  select(is_canceled, lead_time_groups, booking_channel, .pred_1) %>%
   head(10)
 
 resort_preds %>%
@@ -528,65 +191,12 @@ resort_preds %>%
 ```
 ```{r}
 
-library(tidyverse)
 
-library(tidymodels)
-
-city_model <- city_hb_q3 %>%
-  mutate(
-    is_canceled = factor(is_canceled, levels = c("1", "0")),
-    risk_group = as.factor(risk_group)
-  ) %>%
-  select(is_canceled, lead_time_groups, risk_group) %>%
-  drop_na()
-
-set.seed(123)
-city_split <- initial_split(city_model, prop = 0.80)
-city_train <- training(city_split)
-city_test <- testing(city_split)
-
-city_recipe <- recipe(is_canceled ~ lead_time_groups + risk_group, data = resort_train) %>%
-  step_dummy(all_nominal_predictors())
-
-city_mod <- logistic_reg() %>%
-  set_engine("glm")
-
-city_wflow <- workflow() %>%
-  add_recipe(city_recipe) %>%
-  add_model(city_mod)
-
-city_fit <- city_wflow %>%
-  fit(data = city_train)
-
-tidy(city_fit)
-
-city_preds <- predict(city_fit, city_test, type = "prob") %>%
-  bind_cols(city_test)
-
-city_preds %>%
-  select(is_canceled, lead_time_groups, risk_group, .pred_1) %>%
-  head(10)
-
-city_preds %>%
-  roc_auc(truth = is_canceled, .pred_1)
-
-city_preds %>%
-  roc_curve(truth = is_canceled, .pred_1) %>%
-  autoplot()
 ```
 
 
 ```{r}
-#Percentage of cancellations by distribution channel for city hotel 
 
-cancellations_by_channel_city <- hotel_booking_city %>%
-  group_by(distribution_channel) %>%
-  summarise(
-    total_number_bookings_city = n(),
-    total_cancelled_city = sum(is_canceled == 1),
-    percentage_cancelled_city = mean(is_canceled) * 100
-  )
-print(cancellations_by_channel_city)
 ```
 
 ```{r}
@@ -603,23 +213,7 @@ print(cancellations_by_channel_resort)
 ```
 
 ```{r}
-#Graph for cancelled bookings for each distribution channel for city hotel
 
-library(ggplot2)
-
-cancellations_by_channel_city %>%
-  filter(distribution_channel != "Undefined" & distribution_channel != "GDS") %>%
-  ggplot(aes(x = reorder(distribution_channel, -percentage_cancelled_city),
-           y = percentage_cancelled_city,
-       fill = distribution_channel)) +
-  geom_col(show.legend = FALSE) +
-  geom_text(aes(label = paste0(round(percentage_cancelled_city, 1), "%")), vjust = -0.5) +
-  labs(
-    x = "Distribution Channel",
-    y = "percentage cancelled (%)",
-    title = "Percentage of bookings cancelled across each distribution channel for City Hotel"
-  ) +
-  theme_minimal()
 ```
 
 ```{r}
