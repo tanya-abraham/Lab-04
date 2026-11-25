@@ -281,11 +281,7 @@ resort_risk_table_sorted <- resort_risk_table %>%
 
 ```
 
-```{r}
 
-
-
-```
 
 ``` {r}
 # Visualizing for resort hotel 
@@ -298,10 +294,17 @@ resort_risk_table$lead_time_groups <- factor(
 library(ggplot2)
 ggplot(resort_risk_table, aes( x = lead_time_groups, y = booking_channel, fill = cancellation_rate)) +
   geom_tile() +
+  geom_text(
+    aes(label = paste0("$", sprintf("%.0f", mean_adr))),
+color = "white",
+size = 3.5
+  ) +
   labs(
     title = "Risk Analysis for Resort Hotel",
+    subtitle = "Tile colour shows cancellation rate (%); labels show mean ADR",
     y = "Distribution Channels",
-    x = "Booking Time"
+    x = "Booking Time",
+    fill = "Cancellation Rate (%)"
   ) +
   theme_gray() 
 
@@ -309,11 +312,6 @@ ggplot(resort_risk_table, aes( x = lead_time_groups, y = booking_channel, fill =
 ```
 
 
-
-```{r}
-
-
-```
 
 ```{r}
 # Modelling for Resort Hotel 
@@ -366,15 +364,7 @@ resort_preds %>%
   autoplot()
 
 ```
-```{r}
 
-
-```
-
-
-```{r}
-
-```
 
 ```{r}
 #Percentage of cancellations by distribution channel for resort hotel
@@ -389,9 +379,7 @@ cancellations_by_channel_resort <- hotel_booking_resort %>%
 print(cancellations_by_channel_resort)
 ```
 
-```{r}
 
-```
 
 ```{r}
 #Graph for cancelled bookings for each distribution channel for resort hotel
