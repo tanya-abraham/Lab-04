@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
-subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+title: "Exploring resort hotel"
+subtitle: "Maximising profit for resort hotel"
+author: "Team name <br> Tanya Abraham, Jessica Crocker, Fiona Reji"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
@@ -39,7 +39,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```
 
 ```{r load-data, include=FALSE}
-# Load your data here
+hotel_booking <- read_csv("data/hotel_booking.csv")
 
 ```
 
@@ -53,14 +53,12 @@ style_xaringan(
 
 class: center, middle
 
-## A statement of the overall goal / research question
-
+How different factors affect the profitability of the Resort Hotel
 ---
 
 class: inverse, center, middle
 
-# Section title
-
+Peak seasons and demand 
 ---
 
 # Hello World
@@ -73,7 +71,7 @@ class: inverse, center, middle
 
 class: inverse, middle, center
 
-# Using xaringan
+Identifying high cancellation risk groups
 
 ---
 
@@ -86,6 +84,12 @@ class: inverse, middle, center
 --
 
 - Like this
+
+---
+
+class: inverse, middle, center
+
+Cancellation rates across different distribution channels
 
 ---
 
