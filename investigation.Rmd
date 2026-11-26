@@ -184,7 +184,9 @@ ggplot(monthly_resort,
 resort_fit <- linear_reg() %>%
   set_engine("lm") %>%
   fit(avr_adr_resort ~ monthly_bookings, data = monthly_resort)
-tidy(resort_fit)
+tidy(resort_fit) 
+  glance(resort_fit) %>%
+  select(r.squared)
 ```
 
 
@@ -239,6 +241,9 @@ resort_2_fit <- linear_reg() %>%
   set_engine("lm") %>%
   fit(avr_daily_adr_resort ~ daily_bookings, data = daily_resort)
 tidy(resort_2_fit)
+glance(resort_2_fit) %>%
+  select(r.squared)
+
 ```
 
 
