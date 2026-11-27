@@ -26,6 +26,10 @@ library(tidymodels)
 
 
 ```{r load-data}
+```
+
+
+```{r load-data}
 # load your data 
 hotel_booking <- read_csv("data/hotel_booking.csv")
 # View(hotel_booking)
@@ -388,7 +392,10 @@ cancellations_by_channel_resort <- hotel_booking_resort %>%
 print(cancellations_by_channel_resort)
 ```
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 ```{r}
 #Graph for cancelled bookings for each distribution channel for resort hotel
