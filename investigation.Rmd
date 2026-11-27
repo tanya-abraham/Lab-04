@@ -270,6 +270,8 @@ resort_hb_q3 <- hotel_booking %>%
   )
   )
 
+# Creating risk table 
+
 resort_risk_table <- resort_hb_q3 %>%
   group_by(booking_channel, lead_time_groups) %>%
   summarise(
@@ -332,6 +334,8 @@ resort_model <- resort_hb_q3 %>%
   ) %>%
   select(is_canceled, lead_time_groups, booking_channel) %>%
   drop_na()
+
+# Splitting the data 
 
 set.seed(123)
 resort_split <- initial_split(resort_model, prop = 0.80)

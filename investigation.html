@@ -11,7 +11,7 @@
 
 <meta name="author" content="by Team-Name: Tanya Abraham, Fiona Reji, Jessica Crocker" />
 
-<meta name="date" content="2026-11-26" />
+<meta name="date" content="2026-11-27" />
 
 <title>IDS investigation worksheet</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">IDS investigation worksheet</h1>
 <h4 class="author">by Team-Name: Tanya Abraham, Fiona Reji, Jessica
 Crocker</h4>
-<h4 class="date">2026-11-26</h4>
+<h4 class="date">2026-11-27</h4>
 
 </div>
 
@@ -597,6 +597,8 @@ resort_hb_q3 &lt;- hotel_booking %&gt;%
   )
   )
 
+# Creating risk table 
+
 resort_risk_table &lt;- resort_hb_q3 %&gt;%
   group_by(booking_channel, lead_time_groups) %&gt;%
   summarise(
@@ -652,6 +654,8 @@ resort_model &lt;- resort_hb_q3 %&gt;%
   ) %&gt;%
   select(is_canceled, lead_time_groups, booking_channel) %&gt;%
   drop_na()
+
+# Splitting the data 
 
 set.seed(123)
 resort_split &lt;- initial_split(resort_model, prop = 0.80)
